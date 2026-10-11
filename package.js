@@ -15,9 +15,14 @@ Package.onUse(function (api) {
   api.mainModule('gridstack.js', 'client');
 });
 
+// Test matrix, set by test.sh: TEST_BLAZE=3.1 (default) or 3.0, TEST_JQUERY=1 to add
+// jQuery. Blaze 3.1 works with or without jQuery; Blaze 3.0 requires it.
+const testBlaze = process.env.TEST_BLAZE || '3.1';
+const testJquery = process.env.TEST_JQUERY === '1' || testBlaze === '3.0';
+
 Package.onTest(function (api) {
-  // Tests run on Blaze 3.1, which drops the jQuery requirement of Blaze 3.0.
-  api.use('blaze-html-templates@3.1.0-alpha.0', 'client');
+  api.use(testBlaze === '3.0' ? 'blaze-html-templates@3.0.0' : 'blaze-html-templates@3.1.0-alpha.0', 'client');
+  if (testJquery) api.use('jquery', 'client');
   // Loads mocha before the tests, so that describe/it exist when they run.
   api.use(['meteortesting:mocha', 'ecmascript', 'templating', 'blaze', 'tracker', 'reactive-var', 'dupontbertrand:gridstack'], 'client');
   api.addFiles('gridstack-tests.html', 'client', { lazy: true });

@@ -1,3 +1,9 @@
 <template name="gridStackTestItem">
   <div class="test-item">{{label}}</div>
 </template>
+
+<template name="gridStackTestHost">
+  <div class="test-host">
+    {{> gridStack items=items itemTemplate="gridStackTestItem" options=options}}
+  </div>
+</template>

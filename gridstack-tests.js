@@ -21,6 +21,31 @@ const flush = () => new Promise((resolve) => {
 let destroyedItems = 0;
 Template.gridStackTestItem.onDestroyed(() => { destroyedItems += 1; });
 
+let itemClicks = [];
+Template.gridStackTestItem.events({
+  'click .test-item'() {
+    itemClicks.push(this.id);
+  },
+});
+
+let hostClicks = [];
+Template.gridStackTestHost.events({
+  'click .grid-stack-item'(event) {
+    hostClicks.push(event.currentTarget.gridstackNode.id);
+  },
+});
+
+// Blaze 3.0 always uses jQuery; Blaze 3.1 uses it only when the app has it.
+const blazeUsesJquery = () => Blaze._DOMBackend._hasJQuery ?? true;
+
+describe('gridStack environment', function () {
+  it('lets Blaze use jQuery exactly when the jquery package is present', function () {
+    const jqueryPresent = Boolean(Package.jquery);
+    console.log(`    (jquery package ${jqueryPresent ? 'present' : 'absent'}, Blaze ${blazeUsesJquery() ? 'with' : 'without'} jQuery)`);
+    assertEqual(blazeUsesJquery(), jqueryPresent, 'Blaze DOM backend');
+  });
+});
+
 describe('gridStack', function () {
   let container;
   let view;
@@ -99,6 +124,33 @@ describe('gridStack', function () {
     assertEqual(changes.length, 1, 'onChange calls');
     assertEqual(changes[0].sort((first, second) => first.id.localeCompare(second.id)),
       [{ id: 'a', x: 3, y: 2, w: 1, h: 1 }, { id: 'b', x: 1, y: 0, w: 1, h: 1 }], 'layout');
+  });
+
+  it('runs the event maps of the item template', async function () {
+    await render([{ id: 'a', x: 0, y: 0, w: 1, h: 1, label: 'A' }, { id: 'b', x: 1, y: 0, w: 1, h: 1, label: 'B' }]);
+    itemClicks = [];
+    [...container.querySelectorAll('.test-item')].find((element) => element.textContent === 'B').click();
+    await flush();
+    assertEqual(itemClicks, ['b'], 'item clicks');
+  });
+
+  it('lets the enclosing template handle events on the grid items', async function () {
+    const hostItems = new ReactiveVar([{ id: 'a', x: 0, y: 0, w: 1, h: 1, label: 'A' }, { id: 'b', x: 1, y: 0, w: 1, h: 1, label: 'B' }]);
+    container = document.createElement('div');
+    container.style.width = '400px';
+    document.body.appendChild(container);
+    view = Blaze.renderWithData(Template.gridStackTestHost, () => ({
+      items: hostItems.get(),
+      options: { column: 4, cellHeight: 50, margin: 0, animate: false, mode: 'float' },
+    }), container);
+    await flush();
+    hostClicks = [];
+    [...container.querySelectorAll('.test-item')].find((element) => element.textContent === 'A').click();
+    hostItems.set([...hostItems.get(), { id: 'c', x: 2, y: 0, w: 1, h: 1, label: 'C' }]);
+    await flush();
+    [...container.querySelectorAll('.test-item')].find((element) => element.textContent === 'C').click();
+    await flush();
+    assertEqual(hostClicks, ['a', 'c'], 'host clicks, including on an item added later');
   });
 
   it('removes the item views when the component is destroyed', async function () {
