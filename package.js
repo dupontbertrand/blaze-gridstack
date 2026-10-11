@@ -23,7 +23,7 @@ const testBlaze = process.env.TEST_BLAZE || '3.1';
 const testJquery = process.env.TEST_JQUERY === '1' || testBlaze === '3.0';
 
 Package.onTest(function (api) {
-  api.use(testBlaze === '3.0' ? 'blaze-html-templates@3.0.0' : 'blaze-html-templates@3.1.0-alpha.0', 'client');
+  api.use(testBlaze === '3.0' ? 'blaze-html-templates@3.0.0' : 'blaze-html-templates@3.1.0-beta.0', 'client');
   if (testJquery) api.use('jquery', 'client');
   // Loads mocha before the tests, so that describe/it exist when they run.
   api.use(['meteortesting:mocha', 'ecmascript', 'templating', 'blaze', 'tracker', 'reactive-var', 'dupontbertrand:gridstack'], 'client');
