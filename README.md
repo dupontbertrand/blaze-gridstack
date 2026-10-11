@@ -8,7 +8,7 @@ A Blaze component for [gridstack.js](https://gridstackjs.com): drag-and-drop, re
 
 You pass the items, the component keeps the grid in line with them: items that appear are added, items that disappear are removed, items whose position changes are moved. When the user drags or resizes, `onChange` gets the new layout. Changes made by another client (another tab, another user) show up live.
 
-Meteor 3, Blaze 3, gridstack 14 (bundled, no npm install needed).
+Meteor 3, Blaze 3, gridstack 14 (bundled, no npm install needed). The component itself does not use jQuery: Blaze 3.0 apps still need the `jquery` package because Blaze 3.0 requires it, Blaze 3.1 apps do not.
 
 ## Install
 
@@ -55,6 +55,14 @@ Template.dashboard.helpers({
 ## How it works
 
 gridstack creates, moves and removes the item elements itself, so the component never renders them with `{{#each}}`: Blaze and gridstack would fight over the same DOM nodes. The component adds items through the gridstack API and renders `itemTemplate` inside each item's content element with `Blaze.renderWithData`. Views are removed when their item goes away and when the component is destroyed.
+
+## Tests
+
+```bash
+./test.sh
+```
+
+Runs the tests in a headless Chromium with `meteortesting:mocha` and Playwright, on Blaze 3.1. Playwright is installed once in `~/.cache/blaze-gridstack-test-runner`, outside the package, because Meteor treats a `node_modules` directory inside a package as part of the package.
 
 ## License
 
