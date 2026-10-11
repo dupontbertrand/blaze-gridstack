@@ -10,7 +10,9 @@ Npm.depends({ gridstack: '14.0.0' });
 
 Package.onUse(function (api) {
   api.versionsFrom('3.0');
-  api.use(['ecmascript', 'templating', 'blaze', 'tracker', 'reactive-var'], 'client');
+  api.use(['ecmascript', 'tracker', 'reactive-var'], 'client');
+  // Blaze 3.0 (templating 1.4) and Blaze 3.1 (templating 1.5), with or without jQuery.
+  api.use(['blaze@3.0.0', 'templating@1.4.0'], 'client');
   api.addFiles('gridstack.html', 'client', { lazy: true });
   api.mainModule('gridstack.js', 'client');
 });
