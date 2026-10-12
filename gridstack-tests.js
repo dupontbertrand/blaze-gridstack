@@ -41,7 +41,8 @@ const blazeUsesJquery = () => Blaze._DOMBackend._hasJQuery ?? true;
 describe('gridStack environment', function () {
   it('lets Blaze use jQuery exactly when the jquery package is present', function () {
     const jqueryPresent = Boolean(Package.jquery);
-    console.log(`    (jquery package ${jqueryPresent ? 'present' : 'absent'}, Blaze ${blazeUsesJquery() ? 'with' : 'without'} jQuery)`);
+    const gridstackVersion = require('gridstack/package.json').version;
+    console.log(`    (jquery package ${jqueryPresent ? 'present' : 'absent'}, Blaze ${blazeUsesJquery() ? 'with' : 'without'} jQuery, app gridstack ${gridstackVersion})`);
     assertEqual(blazeUsesJquery(), jqueryPresent, 'Blaze DOM backend');
   });
 });
@@ -63,7 +64,7 @@ describe('gridStack', function () {
     view = Blaze.renderWithData(Template.gridStack, () => ({
       items: items.get(),
       itemTemplate: 'gridStackTestItem',
-      options: { column: 4, cellHeight: 50, margin: 0, animate: false, mode: 'float' },
+      options: { column: 4, cellHeight: 50, margin: 0, animate: false, mode: 'float', float: true },
       onChange: (layout) => changes.push(layout),
       onReady: (instance) => { grid = instance; },
     }), container);
@@ -141,7 +142,7 @@ describe('gridStack', function () {
     document.body.appendChild(container);
     view = Blaze.renderWithData(Template.gridStackTestHost, () => ({
       items: hostItems.get(),
-      options: { column: 4, cellHeight: 50, margin: 0, animate: false, mode: 'float' },
+      options: { column: 4, cellHeight: 50, margin: 0, animate: false, mode: 'float', float: true },
     }), container);
     await flush();
     hostClicks = [];

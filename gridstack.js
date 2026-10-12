@@ -2,9 +2,15 @@ import { Template } from 'meteor/templating';
 import { Blaze } from 'meteor/blaze';
 import { Tracker } from 'meteor/tracker';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { GridStack } from 'gridstack';
-import 'gridstack/dist/gridstack.min.css';
+import { checkNpmVersions } from 'meteor/tmeasday:check-npm-versions';
 import './gridstack.html';
+
+// gridstack comes from the app (`meteor npm install gridstack`), so that security
+// updates come straight from npm. The version is checked before gridstack is loaded,
+// hence require() rather than import, which would be hoisted above the check.
+checkNpmVersions({ gridstack: '12.x || 13.x || 14.x' }, 'dupontbertrand:gridstack');
+const { GridStack } = require('gridstack');
+require('gridstack/dist/gridstack.min.css');
 
 export { GridStack };
 

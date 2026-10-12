@@ -1,16 +1,15 @@
 Package.describe({
   name: 'dupontbertrand:gridstack',
-  version: '0.1.0',
+  version: '0.2.0',
   summary: 'Blaze component for gridstack.js: declarative, reactive drag-and-drop grid layouts',
   git: 'https://github.com/dupontbertrand/blaze-gridstack',
   documentation: 'README.md',
 });
 
-Npm.depends({ gridstack: '14.0.0' });
-
 Package.onUse(function (api) {
   api.versionsFrom('3.0');
-  api.use(['ecmascript', 'tracker', 'reactive-var'], 'client');
+  // gridstack is not bundled: the app installs it from npm, the package checks the version.
+  api.use(['ecmascript', 'tracker', 'reactive-var', 'tmeasday:check-npm-versions@2.1.0'], 'client');
   // Blaze 3.0 (templating 1.4) and Blaze 3.1 (templating 1.5), with or without jQuery.
   api.use(['blaze@3.0.0', 'templating@1.4.0'], 'client');
   api.addFiles('gridstack.html', 'client', { lazy: true });
